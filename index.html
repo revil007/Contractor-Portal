@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal Kontraktor SCI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0E2433;--amber:#F2A900;--ink:#14202B;--muted:#52606D;--line:#D9DEE3;--bg:#F4F6F8;--ok:#1B5E36;--okbg:#E3F2E8;--warn:#6B4600;--warnbg:#FFF3D1;--err:#A61B1B;--errbg:#FBE6E6}
+*{box-sizing:border-box}
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+header{background:var(--navy);color:#fff}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+.top{display:flex;align-items:center;gap:12px;padding:16px 0}
+.logo{width:40px;height:40px;border-radius:8px;background:var(--amber);color:var(--navy);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.top h1{font-size:17px;margin:0}
+.top p{margin:0;font-size:13px;color:#B8C4CE}
+.hero{padding:8px 0 26px}
+.hero h2{margin:0 0 4px;font-size:25px;line-height:1.2}
+.hero p{margin:0;color:#D3DCE3;font-size:14px}
+main{padding:20px 0 40px}
+.cards{display:grid;gap:12px}
+.card{display:flex;gap:14px;align-items:center;padding:18px;background:#fff;border:1px solid #E1E6EA;border-radius:14px;text-decoration:none;color:inherit}
+.card:hover{border-color:var(--navy)}
+.card .num{font-family:'IBM Plex Mono',monospace;font-weight:600;color:#8A5A00;font-size:14px;width:26px;flex-shrink:0}
+.card h3{margin:0;font-size:16px}
+.card p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.card.disabled{opacity:.6;pointer-events:none}
+.badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--line);color:var(--muted);margin-left:auto;white-space:nowrap}
+.note{margin-top:16px;padding:14px;border-radius:12px;background:#fff;border:1px solid #E1E6EA;font-size:13px;color:var(--muted)}
+section.view{display:none}
+section.view.active{display:block}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--navy);text-decoration:none;font-weight:600;font-size:14px;margin-bottom:8px;min-height:44px}
+h2.title{margin:0 0 4px;font-size:22px}
+p.sub{margin:0 0 16px;color:var(--muted);font-size:14px}
+fieldset{border:1px solid #E1E6EA;background:#fff;border-radius:14px;padding:16px;margin:0 0 14px;min-width:0}
+legend{font-weight:700;font-size:14px;padding:0 6px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.full{grid-column:1/-1}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600}
+input[type=text],input[type=tel],input[type=email],input[type=date],input[type=time],input[type=file],select,textarea{font:inherit;font-weight:400;font-size:15px;padding:11px 12px;border:1px solid #C5CDD4;border-radius:10px;background:#fff;color:var(--ink);width:100%;min-height:46px}
+textarea{min-height:90px;resize:vertical}
+.req{color:var(--err)}
+.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.checks label{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;cursor:pointer;min-height:44px}
+.checks input,.decl input{width:20px;height:20px;accent-color:var(--navy);flex-shrink:0;margin:0}
+.decl{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer}
+.hint{font-size:12px;color:var(--muted);font-weight:400}
+.hint a{color:var(--navy)}
+.btn{font:inherit;font-weight:700;font-size:16px;border:none;border-radius:12px;padding:14px 18px;min-height:50px;cursor:pointer;background:var(--amber);color:var(--navy);width:100%}
+.btn.sec{background:#fff;border:1.5px solid var(--navy);font-weight:600;font-size:14px;min-height:46px;padding:10px 14px;width:auto}
+.btn:disabled{opacity:.6;cursor:wait}
+.w-row{display:grid;grid-template-columns:1.5fr 1.1fr 1fr 1fr 44px;gap:8px;align-items:end;padding:10px 0;border-bottom:1px dashed var(--line)}
+.w-row:first-child{padding-top:0}
+.icon-btn{width:44px;height:46px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;color:var(--err);font-size:20px}
+.msg{padding:14px;border-radius:12px;font-size:14px;margin:0 0 14px}
+.msg.ok{background:var(--okbg);color:var(--ok)}
+.msg.warn{background:var(--warnbg);color:var(--warn)}
+.msg.err{background:var(--errbg);color:var(--err)}
+.ref{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;letter-spacing:.04em;display:block;margin:6px 0}
+.row{display:flex;gap:8px;align-items:end}
+.row > *:first-child{flex:1}
+.info{background:var(--bg);border-radius:10px;padding:12px;font-size:14px;margin-top:12px}
+.status-item{background:#fff;border:1px solid #E1E6EA;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:14px}
+.pill{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.p-pending{background:var(--warnbg);color:var(--warn)}.p-ok{background:var(--okbg);color:var(--ok)}.p-no{background:var(--errbg);color:var(--err)}
+.hidden{display:none!important}
+footer{text-align:center;font-size:13px;color:var(--muted);padding:0 16px 32px}
+@media(max-width:600px){.grid,.checks{grid-template-columns:1fr}.w-row{grid-template-columns:1fr 1fr}.w-row .wn{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="logo">SCI</div>
+      <div><h1>Portal Kontraktor</h1><p>Sepangar Chemical Industry Sdn Bhd</p></div>
+    </div>
+    <div class="hero" id="hero">
+      <h2>Sebelum mula kerja di SCI</h2>
+      <p>Diisi oleh wakil / penyelia syarikat kontraktor.</p>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ HOME ============ -->
+<section class="view" id="v-home">
+  <div class="cards">
+    <a class="card" href="#prestart">
+      <span class="num">01</span>
+      <div><h3>Pre-Start Work</h3><p>Maklumat kerja, pekerja, peralatan, HIRARC, PPE & PTW. Hantar selewat-lewatnya sehari sebelum kerja.</p></div>
+    </a>
+    <a class="card" href="#weekend">
+      <span class="num">02</span>
+      <div><h3>Pas Kerja Hujung Minggu</h3><p>Permohonan bekerja hari Sabtu, Ahad atau cuti umum. Perlu kelulusan HSE SCI.</p></div>
+    </a>
+    <a class="card disabled" href="#ptw" aria-disabled="true">
+      <span class="num">03</span>
+      <div><h3>Permohonan PTW</h3><p>Isi bahagian requestor & fire watch pada borang PTW SCI.</p></div>
+      <span class="badge">Akan datang</span>
+    </a>
+    <a class="card" href="#status">
+      <span class="num">?</span>
+      <div><h3>Semak Status</h3><p>Semak status pendaftaran dan pas hujung minggu dengan No. Rujukan.</p></div>
+    </a>
+  </div>
+  <div class="note">Safety induction tetap dijalankan oleh HSE SCI pada hari pertama kerja. Sila bawa semua pekerja yang disenaraikan.</div>
+</section>
+
+<!-- ============ PRE-START ============ -->
+<section class="view" id="v-prestart">
+  <a class="back" href="#home">← Kembali</a>
+  <h2 class="title">Pre-Start Work</h2>
+  <p class="sub">Hantar selewat-lewatnya <strong>sehari sebelum</strong> kerja dimulakan.</p>
+  <div id="ps-msg"></div>
+
+  <form id="ps-form" novalidate>
+    <fieldset>
+      <legend>Syarikat & Wakil</legend>
+      <div class="grid">
+        <label class="f full">Nama Syarikat <span class="req">*</span><input type="text" name="company" required></label>
+        <label class="f">Nama Wakil / Penyelia <span class="req">*</span><input type="text" name="repName" required></label>
+        <label class="f">No. Telefon <span class="req">*</span><input type="tel" name="repPhone" required></label>
+        <label class="f full">Email <span class="hint">(salinan pengesahan dihantar ke sini)</span><input type="email" name="repEmail"></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Maklumat Kerja</legend>
+      <div class="grid">
+        <label class="f">Pegawai SCI Bertanggungjawab <span class="req">*</span><input type="text" name="sciHost" required></label>
+        <label class="f">Jabatan <span class="req">*</span>
+          <select name="department" required>
+            <option value="">— Pilih —</option>
+            <option>Production</option><option>Maintenance</option><option>Engineering</option>
+            <option>HSE</option><option>Warehouse / Logistik</option><option>Admin</option><option>Lain-lain</option>
+          </select>
+        </label>
+        <label class="f full">Lokasi / Kawasan Kerja <span class="req">*</span><input type="text" name="workArea" required></label>
+        <label class="f full">Skop Kerja <span class="req">*</span><textarea name="scope" required placeholder="Terangkan kerja yang akan dibuat"></textarea></label>
+        <label class="f">Tarikh Mula <span class="req">*</span><input type="date" name="startDate" id="ps-start" required></label>
+        <label class="f">Anggaran Tarikh Tamat <span class="req">*</span><input type="date" name="endDate" id="ps-end" required></label>
+        <label class="f">Waktu Mula <span class="req">*</span><input type="time" name="timeStart" value="08:00" required></label>
+        <label class="f">Waktu Tamat <span class="req">*</span><input type="time" name="timeEnd" value="17:00" required></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Senarai Pekerja</legend>
+      <div id="workers"></div>
+      <button type="button" class="btn sec" id="add-worker" style="margin-top:12px">+ Tambah Pekerja</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Peralatan / Jentera</legend>
+      <div class="checks" id="equipment"></div>
+      <label class="f" style="margin-top:10px">Lain-lain<input type="text" name="equipmentOther"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Jenis PTW Diperlukan</legend>
+      <div class="checks" id="ptw"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>PPE Yang Akan Digunakan</legend>
+      <div class="checks" id="ppe"></div>
+      <label class="f" style="margin-top:10px">Lain-lain<input type="text" name="ppeOther"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>HIRARC</legend>
+      <label class="f">Muat Naik HIRARC <span class="req">*</span>
+        <input type="file" id="hirarc" accept=".pdf,.jpg,.jpeg,.png,.xls,.xlsx,.doc,.docx" required>
+        <span class="hint">PDF, gambar, Excel atau Word. Maksimum 5 MB. Tiada HIRARC? Boleh sediakan dengan <a href="https://revil007.github.io/Risk-Calculator/" target="_blank" rel="noopener">HIRARC Risk Calculator</a>.</span>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <label class="decl"><input type="checkbox" name="declare" required>
+        <span>Saya mengesahkan maklumat di atas adalah benar, semua pekerja mempunyai dokumen yang sah, dan akan menghadiri safety induction SCI pada hari pertama.</span>
+      </label>
+    </fieldset>
+
+    <button type="submit" class="btn" id="ps-submit">Hantar Pre-Start</button>
+  </form>
+</section>
+
+<!-- ============ WEEKEND PASS ============ -->
+<section class="view" id="v-weekend">
+  <a class="back" href="#home">← Kembali</a>
+  <h2 class="title">Pas Kerja Hujung Minggu</h2>
+  <p class="sub">Pre-Start mesti sudah dihantar. Permohonan akan dihantar kepada HSE SCI untuk kelulusan.</p>
+  <div id="wk-msg"></div>
+
+  <form id="wk-form" novalidate>
+    <fieldset>
+      <legend>No. Rujukan Pre-Start</legend>
+      <div class="row">
+        <label class="f">No. Rujukan <span class="req">*</span><input type="text" name="ref" id="wk-ref" placeholder="SCI-CON-2026-001" required style="font-family:'IBM Plex Mono',monospace;text-transform:uppercase"></label>
+        <button type="button" class="btn sec" id="wk-check">Semak</button>
+      </div>
+      <div id="wk-info" class="info hidden"></div>
+    </fieldset>
+
+    <div id="wk-rest" class="hidden">
+      <fieldset>
+        <legend>Butiran Kerja Hujung Minggu</legend>
+        <div class="grid">
+          <label class="f">Tarikh Kerja <span class="req">*</span><input type="date" name="workDate" id="wk-date" required></label>
+          <div></div>
+          <label class="f">Waktu Mula <span class="req">*</span><input type="time" name="timeStart" value="08:00" required></label>
+          <label class="f">Waktu Tamat <span class="req">*</span><input type="time" name="timeEnd" value="17:00" required></label>
+          <label class="decl full hidden" id="wk-holiday"><input type="checkbox" name="publicHoliday"><span>Tarikh ini bukan Sabtu/Ahad. Saya sahkan ia adalah <strong>cuti umum</strong>.</span></label>
+          <label class="f full">Kerja Yang Akan Dibuat <span class="req">*</span><textarea name="description" required></textarea></label>
+          <label class="f">Penyelia Di Tapak <span class="req">*</span><input type="text" name="supervisor" required></label>
+          <label class="f">No. Telefon Penyelia <span class="req">*</span><input type="tel" name="supervisorPhone" required></label>
+          <label class="f full">Pegawai SCI Bertugas / Bertanggungjawab <span class="req">*</span><input type="text" name="sciOfficer" required></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Pekerja Terlibat</legend>
+        <div class="checks" id="wk-workers"></div>
+      </fieldset>
+
+      <button type="submit" class="btn" id="wk-submit">Hantar Permohonan</button>
+    </div>
+  </form>
+</section>
+
+<!-- ============ STATUS ============ -->
+<section class="view" id="v-status">
+  <a class="back" href="#home">← Kembali</a>
+  <h2 class="title">Semak Status</h2>
+  <p class="sub">Masukkan No. Rujukan Pre-Start.</p>
+  <form id="st-form" class="row" novalidate>
+    <label class="f">No. Rujukan<input type="text" id="st-ref" placeholder="SCI-CON-2026-001" required style="font-family:'IBM Plex Mono',monospace;text-transform:uppercase"></label>
+    <button type="submit" class="btn sec">Semak</button>
+  </form>
+  <div id="st-out" style="margin-top:16px"></div>
+</section>
+
+</main>
+<footer>HSE Department · Sepangar Chemical Industry Sdn Bhd</footer>
+
+<script>
+// ====== TETAPAN ======
+const API_URL = 'https://script.google.com/macros/s/AKfycbxBDH2qJ61l1oadrLT855uPb1N-BJEsesZfqqWeCkXf_N4Oha5e6LsgQwfRMX9e1TO7/exec';   // URL Apps Script Web App (.../exec)
+
+const EQUIPMENT = ['Scaffolding','Mesin kimpalan','Gas cutting (oksi-asetilena)','Grinder / power tools','Tangga','Mobile crane / lori kren','Forklift','Man lift / scissor lift','Generator','Kompresor udara','Pam / hos tekanan tinggi','Kenderaan syarikat'];
+const PTW_TYPES = ['Hot Work Permit','Power Supply & Installation Work Permit','Vessel and Tank Entry Work Permit','Tidak memerlukan PTW'];
+const NO_PTW = 'Tidak memerlukan PTW';
+const PPE = ['Topi keselamatan','Kasut keselamatan','Vest reflektif','Cermin mata keselamatan','Sarung tangan','Pelindung telinga','Full body harness','Respirator / mask','Face shield / welding shield','Pakaian kalis kimia','Coverall FR'];
+
+// ====== UTIL ======
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => [...el.querySelectorAll(s)];
+const localISO = d => new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function msg(el, type, html){ el.innerHTML = html ? `<div class="msg ${type}">${html}</div>` : ''; if(html) el.scrollIntoView({behavior:'smooth',block:'center'}); }
+function checks(container, name, items){ $(container).innerHTML = items.map(i => `<label><input type="checkbox" name="${name}" value="${esc(i)}"><span>${esc(i)}</span></label>`).join(''); }
+const picked = (form, name) => $$(`input[name="${name}"]:checked`, form).map(i => i.value);
+
+async function apiPost(payload){
+  const r = await fetch(API_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(payload)});
+  return r.json();
+}
+async function apiGet(params){
+  const r = await fetch(API_URL + '?' + new URLSearchParams(params));
+  return r.json();
+}
+function fileToB64(file){
+  return new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(String(fr.result).split(',')[1]); fr.onerror = rej; fr.readAsDataURL(file); });
+}
+
+// ====== ROUTER ======
+function route(){
+  const v = (location.hash || '#home').slice(1);
+  const id = ['home','prestart','weekend','status'].includes(v) ? v : 'home';
+  $$('section.view').forEach(s => s.classList.toggle('active', s.id === 'v-'+id));
+  $('#hero').classList.toggle('hidden', id !== 'home');
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange', route);
+
+// ====== PRE-START ======
+checks('#equipment','equipment',EQUIPMENT);
+checks('#ptw','ptwTypes',PTW_TYPES);
+checks('#ppe','ppe',PPE);
+// "Tidak memerlukan PTW" tidak boleh dipilih bersama permit lain
+$('#ptw').addEventListener('change', e => {
+  const boxes = $$('input[name="ptwTypes"]', $('#ptw'));
+  if(!e.target.checked) return;
+  boxes.forEach(b => { if(b !== e.target && (e.target.value === NO_PTW || b.value === NO_PTW)) b.checked = false; });
+});
+
+const tomorrow = localISO(new Date(Date.now() + 86400000));
+$('#ps-start').min = tomorrow;
+$('#ps-end').min = tomorrow;
+$('#ps-start').addEventListener('change', e => { $('#ps-end').min = e.target.value || tomorrow; });
+
+function addWorker(){
+  const row = document.createElement('div');
+  row.className = 'w-row';
+  row.innerHTML = `
+    <label class="f wn">Nama<input type="text" class="w-name" required></label>
+    <label class="f">No. IC / Pasport<input type="text" class="w-ic" required></label>
+    <label class="f">Kad Hijau tamat<input type="date" class="w-cidb"></label>
+    <label class="f">NIOSH tamat<input type="date" class="w-niosh"></label>
+    <button type="button" class="icon-btn" aria-label="Buang pekerja">×</button>`;
+  $('button', row).onclick = () => { if($$('.w-row').length > 1) row.remove(); };
+  $('#workers').appendChild(row);
+}
+$('#add-worker').onclick = addWorker;
+addWorker();
+
+$('#ps-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, out = $('#ps-msg');
+  if(!f.checkValidity()){ msg(out,'err','Sila lengkapkan semua ruangan bertanda <strong>*</strong>.'); f.reportValidity(); return; }
+  if(f.startDate.value < tomorrow){ msg(out,'err','Tarikh mula mesti sekurang-kurangnya <strong>esok</strong>. Pre-Start perlu dihantar sehari sebelum kerja.'); return; }
+  if(f.endDate.value < f.startDate.value){ msg(out,'err','Tarikh tamat tidak boleh sebelum tarikh mula.'); return; }
+  if(!picked(f,'ptwTypes').length){ msg(out,'err','Pilih jenis PTW yang diperlukan, atau "Tidak memerlukan PTW".'); return; }
+  if(!picked(f,'ppe').length){ msg(out,'err','Pilih PPE yang akan digunakan.'); return; }
+  const file = $('#hirarc').files[0];
+  if(!file){ msg(out,'err','Sila muat naik HIRARC.'); return; }
+  if(file.size > 5*1024*1024){ msg(out,'err','Fail HIRARC melebihi 5 MB.'); return; }
+
+  const workers = $$('.w-row').map(r => ({ name:$('.w-name',r).value.trim(), ic:$('.w-ic',r).value.trim(), cidb:$('.w-cidb',r).value, niosh:$('.w-niosh',r).value }));
+  const expired = workers.filter(w => (w.cidb && w.cidb < f.startDate.value) || (w.niosh && w.niosh < f.startDate.value));
+  if(expired.length && !confirm(`Dokumen ${expired.map(w=>w.name).join(', ')} tamat sebelum tarikh mula kerja. Teruskan juga?`)) return;
+
+  const btn = $('#ps-submit'); btn.disabled = true; btn.textContent = 'Menghantar…';
+  try{
+    const res = await apiPost({
+      action:'submitPreStart',
+      company:f.company.value.trim(), repName:f.repName.value.trim(), repPhone:f.repPhone.value.trim(), repEmail:f.repEmail.value.trim(),
+      sciHost:f.sciHost.value.trim(), department:f.department.value, workArea:f.workArea.value.trim(), scope:f.scope.value.trim(),
+      startDate:f.startDate.value, endDate:f.endDate.value, timeStart:f.timeStart.value, timeEnd:f.timeEnd.value,
+      workers,
+      equipment:[...picked(f,'equipment'), f.equipmentOther.value.trim()].filter(Boolean),
+      ptwTypes:picked(f,'ptwTypes'),
+      ppe:[...picked(f,'ppe'), f.ppeOther.value.trim()].filter(Boolean),
+      hirarc:{ name:file.name, mimeType:file.type, data:await fileToB64(file) }
+    });
+    if(!res.ok) throw new Error(res.error || 'Ralat tidak diketahui');
+    f.reset(); $('#workers').innerHTML = ''; addWorker();
+    msg(out,'ok',`Pre-Start diterima. No. Rujukan anda:<span class="ref">${esc(res.ref)}</span>Simpan nombor ini. Ia diperlukan untuk Pas Hujung Minggu dan PTW.`);
+  }catch(err){
+    msg(out,'err','Gagal menghantar: ' + esc(err.message) + '. Sila cuba lagi.');
+  }finally{ btn.disabled = false; btn.textContent = 'Hantar Pre-Start'; }
+});
+
+// ====== WEEKEND PASS ======
+$('#wk-date').min = localISO(new Date());
+$('#wk-date').addEventListener('change', e => {
+  const d = e.target.value ? new Date(e.target.value + 'T00:00:00').getDay() : 0;
+  $('#wk-holiday').classList.toggle('hidden', !e.target.value || d === 0 || d === 6);
+});
+
+$('#wk-check').onclick = async () => {
+  const ref = $('#wk-ref').value.trim().toUpperCase(), out = $('#wk-msg');
+  if(!ref){ msg(out,'err','Masukkan No. Rujukan.'); return; }
+  const btn = $('#wk-check'); btn.disabled = true; btn.textContent = '…';
+  try{
+    const res = await apiGet({action:'getRef', ref});
+    if(!res.ok) throw new Error(res.error);
+    msg(out,'','');
+    $('#wk-info').innerHTML = `<strong>${esc(res.company)}</strong><br>${esc(res.scope)}<br><span class="hint">Tempoh: ${esc(res.startDate)} hingga ${esc(res.endDate)} · Status: ${esc(res.status)}</span>`;
+    $('#wk-info').classList.remove('hidden');
+    $('#wk-workers').innerHTML = res.workers.map(n => `<label><input type="checkbox" name="wkWorkers" value="${esc(n)}" checked><span>${esc(n)}</span></label>`).join('');
+    $('#wk-rest').classList.remove('hidden');
+  }catch(err){
+    $('#wk-info').classList.add('hidden'); $('#wk-rest').classList.add('hidden');
+    msg(out,'err', esc(err.message || 'No. Rujukan tidak dijumpai.'));
+  }finally{ btn.disabled = false; btn.textContent = 'Semak'; }
+};
+
+$('#wk-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, out = $('#wk-msg');
+  if($('#wk-rest').classList.contains('hidden')){ msg(out,'err','Tekan <strong>Semak</strong> untuk sahkan No. Rujukan dahulu.'); return; }
+  if(!f.checkValidity()){ msg(out,'err','Sila lengkapkan semua ruangan bertanda <strong>*</strong>.'); f.reportValidity(); return; }
+  const day = new Date(f.workDate.value + 'T00:00:00').getDay();
+  if(day !== 0 && day !== 6 && !f.publicHoliday.checked){ msg(out,'err','Tarikh dipilih bukan hujung minggu. Tandakan pengesahan cuti umum, atau pilih tarikh lain.'); return; }
+  const workers = picked(f,'wkWorkers');
+  if(!workers.length){ msg(out,'err','Pilih sekurang-kurangnya seorang pekerja.'); return; }
+
+  const btn = $('#wk-submit'); btn.disabled = true; btn.textContent = 'Menghantar…';
+  try{
+    const res = await apiPost({
+      action:'submitWeekend', ref:f.ref.value.trim().toUpperCase(),
+      workDate:f.workDate.value, timeStart:f.timeStart.value, timeEnd:f.timeEnd.value, publicHoliday:f.publicHoliday.checked,
+      description:f.description.value.trim(), supervisor:f.supervisor.value.trim(), supervisorPhone:f.supervisorPhone.value.trim(),
+      sciOfficer:f.sciOfficer.value.trim(), workers
+    });
+    if(!res.ok) throw new Error(res.error || 'Ralat tidak diketahui');
+    f.reset(); $('#wk-rest').classList.add('hidden'); $('#wk-info').classList.add('hidden');
+    msg(out,'ok',`Permohonan dihantar kepada HSE SCI. ID Pas:<span class="ref">${esc(res.passId)}</span>Semak status di halaman <a href="#status">Semak Status</a>. Kerja hanya boleh dibuat selepas <strong>diluluskan</strong>.`);
+  }catch(err){
+    msg(out,'err','Gagal menghantar: ' + esc(err.message));
+  }finally{ btn.disabled = false; btn.textContent = 'Hantar Permohonan'; }
+});
+
+// ====== STATUS ======
+function pill(s){
+  const cls = /lulus|disemak|diterima/i.test(s) && !/tidak/i.test(s) ? 'p-ok' : /tolak|pembetulan/i.test(s) ? 'p-no' : 'p-pending';
+  return `<span class="pill ${cls}">${esc(s)}</span>`;
+}
+$('#st-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const ref = $('#st-ref').value.trim().toUpperCase(), out = $('#st-out');
+  if(!ref) return;
+  out.innerHTML = '<p class="hint">Menyemak…</p>';
+  try{
+    const res = await apiGet({action:'status', ref});
+    if(!res.ok) throw new Error(res.error);
+    let html = `<div class="status-item"><div><strong>Pre-Start · ${esc(res.ref)}</strong><br><span class="hint">${esc(res.company)} · ${esc(res.startDate)} hingga ${esc(res.endDate)}</span>${res.remarks ? `<br><span class="hint">Catatan HSE: ${esc(res.remarks)}</span>` : ''}</div>${pill(res.status)}</div>`;
+    html += res.passes.length
+      ? res.passes.map(p => `<div class="status-item"><div><strong>Pas Hujung Minggu · ${esc(p.passId)}</strong><br><span class="hint">${esc(p.workDate)} · ${esc(p.time)}</span>${p.remarks ? `<br><span class="hint">Catatan: ${esc(p.remarks)}</span>` : ''}</div>${pill(p.status)}</div>`).join('')
+      : '<p class="hint">Tiada permohonan pas hujung minggu.</p>';
+    out.innerHTML = html;
+  }catch(err){ out.innerHTML = `<div class="msg err">${esc(err.message || 'No. Rujukan tidak dijumpai.')}</div>`; }
+});
+
+route();
+</script>
+</body>
+</html>
